@@ -1,6 +1,3 @@
-基于Pytorch的卷积神经网络MNIST手写数字识别 `<br>`
-该README是对cnn_mnist_pytorch.py工程的说明
-
 # 手写数字识别
 
 > 代码：[手写数字识别代码](https://paste.org.cn/aFdjZdFYul)
