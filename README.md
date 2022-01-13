@@ -313,11 +313,5 @@ MNIST测试集识别准确率99.22%
 10000张测试集图片识别总时间2.362s(GPU)/8.283s(CPU)
 
 -------------- `<br>`
-By: Mr.Liu Mr.Li Ms.Gai`<br>`
+By: Mr.Liu Mr.Li Ms.Gai `<br>`
 时间：2020年4月 `<br>`
-
-# pytorch_mnist
-
-# pytorch_mnist
-
-# pytorch_mnist
