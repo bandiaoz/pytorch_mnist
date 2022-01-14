@@ -37,7 +37,7 @@ batch_size = 100  #批处理量
 epochs_num = 10  #训练迭代次数
 download = False  #数据集加载方式
 use_gpu = 0  #CUDA GPU加速  1:使用  0:禁用
-is_train = 1  #训练模型  1:重新训练     0:加载现有模型
+is_train = 0  #训练模型  1:重新训练     0:加载现有模型
 show_pic = 1  #图像展示  1:展示过程图像  0:关闭图像显示
 
 # 载入MNIST训练集
