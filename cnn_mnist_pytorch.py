@@ -15,6 +15,7 @@ import torchvision.transforms as transforms
 import numpy as np
 import matplotlib
 from matplotlib import pyplot as plt
+from tqdm import tqdm
 import time
 
 # 设置plot中文字体
@@ -36,7 +37,7 @@ batch_size = 100  #批处理量
 epochs_num = 10  #训练迭代次数
 download = False  #数据集加载方式
 use_gpu = 0  #CUDA GPU加速  1:使用  0:禁用
-is_train = 0  #训练模型  1:重新训练     0:加载现有模型
+is_train = 1  #训练模型  1:重新训练     0:加载现有模型
 show_pic = 1  #图像展示  1:展示过程图像  0:关闭图像显示
 
 # 载入MNIST训练集
@@ -102,7 +103,7 @@ if use_gpu:  # CUDA GPU加速
     net = net.cuda()
 
 if is_train:
-    criterion = nn.CrossEntropyLoss()  # 交叉熵损失函数
+    lossF = nn.CrossEntropyLoss()  # 交叉熵损失函数
     optimizer = torch.optim.Adam(net.parameters(),
                                  lr=learning_rate)  # 使用adam算法进行训练
 
@@ -115,30 +116,32 @@ if is_train:
     # 多次迭代训练网络
     for epoch in range(0, epochs_num):
         # 开始对训练集train_loader进行迭代
-        for i, data in enumerate(train_loader, 0): # (元素，下标)
-            img, label = data # 图像和标签两个tensor
+        processBar = tqdm(train_loader, unit='step') # 构建tqdm进度条
+        for step, (img, label) in enumerate(processBar):
             if use_gpu:  #CUDA GPU加速
                 img, label = img.cuda(), label.cuda()
 
             optimizer.zero_grad()  # 清除网络状态（模型的梯度）
             output = net(img)  # 前向传播，测试部分仅需要先前传播即可
-            loss = criterion(output, label)  # 计算损失函数
+            loss = lossF(output, label)  # 计算损失函数
             loss.backward()  # 反向传播求梯度
             optimizer.step()  # 使用迭代器更新模型权重
 
             _, predict = torch.max(output, 1)
             correct_cnt += (predict == label).sum()  # 预测值与实际值比较，记录正确次数
+            accuracy = (predict == label).sum() / label.shape[0] # 正确率
+
+            processBar.set_description("[%d/%d] Loss: %.4f, Acc: %.4f" % (epoch, epochs_num, loss.item(), accuracy.item()))
 
             # 存储损失值与精度
-            if i % record_interval == record_interval - 1:
+            if step % record_interval == record_interval - 1:
                 counter_temp += record_interval * batch_size
                 counter.append(counter_temp)
                 loss_history.append(loss.item())
-                correct_history.append(correct_cnt.float().item() /
-                                       (record_interval * batch_size))
+                correct_history.append(correct_cnt.float().item() / (record_interval * batch_size))
                 correct_cnt = 0
         print("迭代次数 {}\n 当前损失函数值 {}\n".format(epoch, loss.item()))
-
+    processBar.close()
     # 绘制损失函数与精度曲线
     if show_pic:
         plt.figure(figsize=(20, 10), dpi=80)
