@@ -130,7 +130,6 @@ if is_train:
             _, predict = torch.max(output, 1)
             correct_cnt += (predict == label).sum()  # 预测值与实际值比较，记录正确次数
             accuracy = (predict == label).sum() / label.shape[0] # 正确率
-
             processBar.set_description("[%d/%d] Loss: %.4f, Acc: %.4f" % (epoch, epochs_num, loss.item(), accuracy.item()))
 
             # 存储损失值与精度
@@ -140,7 +139,7 @@ if is_train:
                 loss_history.append(loss.item())
                 correct_history.append(correct_cnt.float().item() / (record_interval * batch_size))
                 correct_cnt = 0
-        print("迭代次数 {}\n 当前损失函数值 {}\n".format(epoch, loss.item()))
+        print("迭代次数 {} 当前损失函数值 {}\n".format(epoch, loss.item()))
     processBar.close()
     # 绘制损失函数与精度曲线
     if show_pic:
